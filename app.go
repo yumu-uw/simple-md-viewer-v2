@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -21,6 +22,12 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+
+	runtime.OnFileDrop(ctx, func(x, y int, paths []string) {
+		for _, p := range paths {
+			rt.EventsEmit(a.ctx, "mdfile:loaded", p)
+		}
+	})
 }
 
 func (a *App) SelectMarkdownFile() string {
