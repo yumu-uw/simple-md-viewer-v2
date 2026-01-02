@@ -1,31 +1,37 @@
-// import { Greet } from "../wailsjs/go/main/App";
-
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/shadcn/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/shadcn/ui/tabs";
+import { EventsOff, EventsOn } from "../wailsjs/runtime/runtime";
+import TabBody from "./components/TabBody";
 
 interface Tab {
     id: string;
     title: string;
+    mdPath: string;
 }
 
 function App() {
     const [tabs, setTabs] = useState<Tab[]>([
-        { id: "1", title: "Tab 1" },
-        { id: "2", title: "Tab 2" },
+        {
+            id: "1",
+            title: "README.md",
+            mdPath: "/Volumes/DataStore/repos/simple-md-viewer/README.md",
+        },
+        { id: "2", title: "Tab 2", mdPath: "" },
     ]);
     const [selectedTab, setSelectedTab] = useState("1");
     const [nextId, setNextId] = useState(3);
 
-    const addTab = () => {
+    const addTab = useCallback((mdPath: string) => {
         const newTab: Tab = {
             id: String(nextId),
             title: `Tab ${nextId}`,
+            mdPath: mdPath,
         };
-        setTabs([...tabs, newTab]);
+        setTabs((prevTabs) => [...prevTabs, newTab]);
         setSelectedTab(newTab.id);
         setNextId(nextId + 1);
-    };
+        console.info("Added new tab:", mdPath);
+    }, [nextId]);
 
     const closeTab = (tabId: string) => {
         const newTabs = tabs.filter((tab) => tab.id !== tabId);
@@ -40,17 +46,29 @@ function App() {
         }
     };
 
+    useEffect(() => {
+        EventsOn("mdfile:loaded", (mdPath: string) => {
+            addTab(mdPath);
+        });
+        return () => {
+            EventsOff("mdfile:loaded");
+        };
+    }, [addTab]);
+
     return (
         <div id="App">
             <div className="flex w-full">
                 {tabs.map((tab) => (
                     <div
                         key={tab.id}
-                        className={`flex items-center group px-2 py-2 border-t-4 ${tab.id === selectedTab ? 'border-t-blue-500' : 'border-t-transparent'}`}>
+                        className={`flex items-center group px-2 py-2 border-t-4 ${tab.id === selectedTab ? "border-t-blue-500" : "border-t-transparent"}`}
+                    >
                         <Button
                             variant="ghost"
                             className="px-2 cursor-pointer hover:bg-transparent"
-                            onClick={() => { setSelectedTab(tab.id) }}
+                            onClick={() => {
+                                setSelectedTab(tab.id);
+                            }}
                         >
                             {tab.title}
                         </Button>
@@ -64,24 +82,14 @@ function App() {
                         >
                             ×
                         </Button>
-                    </div>))}
+                    </div>
+                ))}
             </div>
             {tabs.map((tab) => (
                 <div key={tab.id} hidden={selectedTab !== tab.id}>
-                    <TabContent tabId={tab.id} title={tab.title} />
+                    <TabBody mdPath={tab.mdPath} />
                 </div>
             ))}
-        </div>
-    );
-}
-
-function TabContent({ tabId, title }: { tabId: string; title: string }) {
-    const [count, setCount] = useState(0);
-    return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">{title}</h1>
-            <p className="mb-2">Count: {count}</p>
-            <Button onClick={() => setCount(count + 1)}>Increment</Button>
         </div>
     );
 }
