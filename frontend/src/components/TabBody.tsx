@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import { LoadMD } from "@/../wailsjs/go/main/App";
 import CustomAnchor from "./CustomAnchor";
 import { CustomCodeBlock } from "./CustomCodeBlock";
+import CustomImg from "./CustomImg";
 import { ScrollArea } from "./shadcn/ui/scroll-area";
 
 type Props = {
@@ -30,6 +31,18 @@ export default function TabBody({ mdPath }: Props) {
           components={{
             code: CustomCodeBlock,
             a: CustomAnchor,
+            img(props) {
+              const { src, title, alt, width, height, ...rest } = props;
+              return (
+                <CustomImg
+                  mdPath={mdPath}
+                  src={src as string}
+                  alt={alt as string}
+                  width={width}
+                  height={height}
+                />
+              );
+            },
           }}
         >
           {content}
