@@ -4,6 +4,7 @@ import (
 	"embed"
 	"log"
 	"runtime"
+	"simple-md-viewer/model"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/menu"
@@ -26,12 +27,18 @@ func main() {
 	}
 	FileMenu := AppMenu.AddSubmenu("File")
 	FileMenu.AddText("Open", keys.CmdOrCtrl("o"), func(_ *menu.CallbackData) {
-		mdPath := app.SelectMarkdownFile()
-		if mdPath == "" {
+		result := model.MDInfo{
+			MDPath:   "",
+			FileName: "",
+		}
+		mdInfo := app.SelectMarkdownFile()
+		if mdInfo.MDPath == "" {
 			return
 		}
-		log.Println(mdPath)
-		rt.EventsEmit(app.ctx, "mdfile:loaded", mdPath)
+		log.Println(mdInfo.MDPath)
+		result.MDPath = mdInfo.MDPath
+		result.FileName = mdInfo.FileName
+		rt.EventsEmit(app.ctx, "mdfile:loaded", result)
 	})
 	FileMenu.AddSeparator()
 	FileMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {

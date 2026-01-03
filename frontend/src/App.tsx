@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import type { model } from "wailsjs/go/models";
 import { SelectMarkdownFile } from "@/../wailsjs/go/main/App";
 import { EventsOff, EventsOn } from "@/../wailsjs/runtime/runtime";
 import { Button } from "@/components/shadcn/ui/button";
@@ -16,16 +17,16 @@ function App() {
     const [nextId, setNextId] = useState(1);
 
     const addTab = useCallback(
-        (mdPath: string) => {
+        (mdInfo: model.MDInfo) => {
             const newTab: Tab = {
                 id: String(nextId),
-                title: `Tab ${nextId}`,
-                mdPath: mdPath,
+                title: mdInfo.file_name,
+                mdPath: mdInfo.md_path,
             };
             setTabs((prevTabs) => [...prevTabs, newTab]);
             setSelectedTab(newTab.id);
             setNextId(nextId + 1);
-            console.info("Added new tab:", mdPath);
+            console.info("Added new tab:", mdInfo.md_path);
         },
         [nextId],
     );
@@ -41,16 +42,16 @@ function App() {
     };
 
     const handleOpenClick = async () => {
-        const p = await SelectMarkdownFile();
-        if (p === "") {
+        const mdInfo = await SelectMarkdownFile();
+        if (mdInfo.md_path === "") {
             return;
         }
-        addTab(p);
+        addTab(mdInfo);
     };
 
     useEffect(() => {
-        EventsOn("mdfile:loaded", (mdPath: string) => {
-            addTab(mdPath);
+        EventsOn("mdfile:loaded", (mdInfo: model.MDInfo) => {
+            addTab(mdInfo);
         });
         return () => {
             EventsOff("mdfile:loaded");
@@ -61,7 +62,7 @@ function App() {
         <div id="App">
             {tabs.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-screen gap-4">
-                    <Button onClick={handleOpenClick}>Select Markdown File</Button>
+                    <Button className="cursor-pointer" onClick={handleOpenClick}>Select Markdown File</Button>
                     <div>Or drag and drop a file into the window</div>
                 </div>
             )}
@@ -97,7 +98,11 @@ function App() {
                     </div>
                     <div className="flex-1 overflow-hidden">
                         {tabs.map((tab) => (
-                            <div key={tab.id} hidden={selectedTab !== tab.id} className="h-full">
+                            <div
+                                key={tab.id}
+                                hidden={selectedTab !== tab.id}
+                                className="h-full"
+                            >
                                 <TabBody mdPath={tab.mdPath} />
                             </div>
                         ))}

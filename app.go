@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"os"
+	"path/filepath"
+	"simple-md-viewer/model"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	rt "github.com/wailsapp/wails/v2/pkg/runtime"
@@ -25,12 +27,23 @@ func (a *App) startup(ctx context.Context) {
 
 	runtime.OnFileDrop(ctx, func(x, y int, paths []string) {
 		for _, p := range paths {
-			rt.EventsEmit(a.ctx, "mdfile:loaded", p)
+			if filepath.Ext(p) != ".md" {
+				continue
+			}
+			result := model.MDInfo{
+				MDPath:   p,
+				FileName: filepath.Base(p),
+			}
+			rt.EventsEmit(a.ctx, "mdfile:loaded", result)
 		}
 	})
 }
 
-func (a *App) SelectMarkdownFile() string {
+func (a *App) SelectMarkdownFile() model.MDInfo {
+	result := model.MDInfo{
+		MDPath:   "",
+		FileName: "",
+	}
 	selectedFile, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Select File",
 		Filters: []runtime.FileFilter{
@@ -42,9 +55,12 @@ func (a *App) SelectMarkdownFile() string {
 	})
 
 	if selectedFile == "" || err != nil {
-		return ""
+		return result
 	}
-	return selectedFile
+	fileName := filepath.Base(selectedFile)
+	result.MDPath = selectedFile
+	result.FileName = fileName
+	return result
 }
 
 func (a *App) LoadMD(mdPath string) string {
