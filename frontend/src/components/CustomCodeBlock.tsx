@@ -62,7 +62,12 @@ export const CustomCodeBlock: CodeProps = ({
           </Tooltip>
         </TooltipProvider>
       </div>
-      <SyntaxHighlighter style={oneLight} language={match ? match[1] : ""} PreTag="div">
+      <SyntaxHighlighter
+        style={oneLight}
+        language={match ? match[1] : ""}
+        PreTag="div"
+        customStyle={{ paddingTop: classNames[1] ? "0.5em" : 0, paddingBottom: 0 }}
+      >
         {String(children).replace(/\n$/, "")}
       </SyntaxHighlighter>
     </div>
