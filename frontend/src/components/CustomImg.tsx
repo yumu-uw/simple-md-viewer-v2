@@ -25,5 +25,10 @@ export default function CustomImg({
     }
     LoadImgBase64(mdPath, src || "").then(setSrcStr);
   }, [src, mdPath]);
+
+  if (!srcStr) {
+    return null;
+  }
+
   return <img src={srcStr} alt={alt} width={width} height={height} />;
 };
