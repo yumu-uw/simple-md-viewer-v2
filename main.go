@@ -46,6 +46,9 @@ func main() {
 		rt.Quit(app.ctx)
 	})
 
+	// WindowsでAllowExternalDragの警告が出るため、プラットフォーム別に設定
+	disableWebViewDrop := runtime.GOOS == "darwin"
+
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "simple-md-viewer",
@@ -57,7 +60,7 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		DragAndDrop: &options.DragAndDrop{
 			EnableFileDrop:     true,
-			DisableWebViewDrop: true,
+			DisableWebViewDrop: disableWebViewDrop,
 			CSSDropProperty:    "--wails-drop-target",
 			CSSDropValue:       "drop",
 		},

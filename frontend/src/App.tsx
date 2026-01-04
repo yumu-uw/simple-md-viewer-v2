@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import type { model } from "wailsjs/go/models";
-import { SelectMarkdownFile } from "@/../wailsjs/go/main/App";
-import { EventsOff, EventsOn } from "@/../wailsjs/runtime/runtime";
+import { HandleDropFile, SelectMarkdownFile } from "@/../wailsjs/go/main/App";
+import {
+    EventsOff,
+    EventsOn,
+    OnFileDrop,
+    OnFileDropOff,
+} from "@/../wailsjs/runtime/runtime";
 import { Button } from "@/components/shadcn/ui/button";
 import TabBody from "@/components/TabBody";
 
@@ -53,8 +58,14 @@ function App() {
         EventsOn("mdfile:loaded", (mdInfo: model.MDInfo) => {
             addTab(mdInfo);
         });
+
+        OnFileDrop((_, __, paths) => {
+            HandleDropFile(paths);
+        }, false);
+
         return () => {
             EventsOff("mdfile:loaded");
+            OnFileDropOff();
         };
     }, [addTab]);
 
@@ -62,7 +73,9 @@ function App() {
         <div id="App">
             {tabs.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-screen gap-4">
-                    <Button className="cursor-pointer" onClick={handleOpenClick}>Select Markdown File</Button>
+                    <Button className="cursor-pointer" onClick={handleOpenClick}>
+                        Select Markdown File
+                    </Button>
                     <div>Or drag and drop a file into the window</div>
                 </div>
             )}
