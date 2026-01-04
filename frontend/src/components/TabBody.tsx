@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 import { LoadMD } from "@/../wailsjs/go/main/App";
 import CustomAnchor from "./CustomAnchor";
@@ -28,6 +30,7 @@ export default function TabBody({ mdPath }: Props) {
       <div className="markdown-body">
         <Markdown
           remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw, rehypeSanitize]}
           components={{
             code: CustomCodeBlock,
             a: CustomAnchor,
