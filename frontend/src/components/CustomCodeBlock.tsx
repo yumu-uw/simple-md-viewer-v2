@@ -20,7 +20,7 @@ export const CustomCodeBlock: CodeProps = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const match = /language-(\w+)/.exec(className || "");
-  const isBlock = !!match;
+  const isBlock = !!match || String(children).includes('\n');
 
   const classNames = className?.split(":") || ["", ""];
   console.debug(classNames);
@@ -62,7 +62,7 @@ export const CustomCodeBlock: CodeProps = ({
           </Tooltip>
         </TooltipProvider>
       </div>
-      <SyntaxHighlighter style={oneLight} language={match[1]} PreTag="div">
+      <SyntaxHighlighter style={oneLight} language={match ? match[1] : ""} PreTag="div">
         {String(children).replace(/\n$/, "")}
       </SyntaxHighlighter>
     </div>
