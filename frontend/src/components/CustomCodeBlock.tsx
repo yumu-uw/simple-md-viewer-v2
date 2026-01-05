@@ -66,7 +66,7 @@ export const CustomCodeBlock: CodeProps = ({
         style={oneLight}
         language={match ? match[1] : ""}
         PreTag="div"
-        customStyle={{ paddingTop: classNames[1] ? "0.5em" : 0, paddingBottom: 0 }}
+        customStyle={{ paddingTop: classNames[1] ? "0.5em" : 0, paddingBottom: 0, background: 'transparent' }}
       >
         {String(children).replace(/\n$/, "")}
       </SyntaxHighlighter>
