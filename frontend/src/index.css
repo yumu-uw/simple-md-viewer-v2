@@ -121,3 +121,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.markdown-body code {
+  background: transparent !important;
+}
