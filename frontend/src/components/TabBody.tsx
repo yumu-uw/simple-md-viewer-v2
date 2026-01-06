@@ -35,7 +35,7 @@ export default function TabBody({ mdPath }: Props) {
             code: CustomCodeBlock,
             a: CustomAnchor,
             img(props) {
-              const { src, title, alt, width, height, ...rest } = props;
+              const { src, alt, width, height } = props;
               return (
                 <CustomImg
                   mdPath={mdPath}

@@ -90,7 +90,6 @@ func (a *App) LoadImgBase64(mdpath string, imgpath string) string {
 		return "error"
 	}
 	ext := filepath.Ext(imgpath)
-	fmt.Println(ext)
 	// SVGのmimetypeが取得出来ないので拡張子で判別
 	if ext == ".svg" {
 		return fmt.Sprintf("data:%s;base64,%s", "image/svg+xml", base64.StdEncoding.EncodeToString(bytes))

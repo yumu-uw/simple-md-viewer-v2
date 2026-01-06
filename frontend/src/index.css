@@ -122,6 +122,10 @@
   }
 }
 
+.markdown-body pre {
+  background-color: #eef1f4 !important;
+}
+
 .markdown-body code {
   background: transparent !important;
 }
