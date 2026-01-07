@@ -1,6 +1,13 @@
 import { Copy } from "lucide-react";
 import mermaid from "mermaid";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import {
+  type MouseEventHandler,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 import type { Components } from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -81,20 +88,7 @@ export const CustomCodeBlock: CodeProps = ({
             {classNames[1]}
           </small>
         )}
-        <div className="absolute top-0 right-1">
-          <TooltipProvider>
-            <Tooltip open={copied}>
-              <TooltipTrigger asChild>
-                <Button size={"sm"} variant={"ghost"} onClick={handleCopy}>
-                  <Copy className="h-6 w-6" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>コピーしました</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+        {CopyButton(copied, handleCopy)}
         <div
           ref={mermaidRef}
           className="
@@ -114,20 +108,7 @@ export const CustomCodeBlock: CodeProps = ({
           {classNames[1]}
         </small>
       )}
-      <div className="absolute top-0 right-1">
-        <TooltipProvider>
-          <Tooltip open={copied}>
-            <TooltipTrigger asChild>
-              <Button size={"sm"} variant={"ghost"} onClick={handleCopy}>
-                <Copy className="h-6 w-6" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>コピーしました</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+      {CopyButton(copied, handleCopy)}
       <SyntaxHighlighter
         style={oneLight}
         language={language}
@@ -143,3 +124,25 @@ export const CustomCodeBlock: CodeProps = ({
     </div>
   );
 };
+
+function CopyButton(
+  copied?: boolean,
+  onClick?: MouseEventHandler<HTMLButtonElement>,
+) {
+  return (
+    <div className="absolute top-0 right-1">
+      <TooltipProvider>
+        <Tooltip open={copied}>
+          <TooltipTrigger asChild>
+            <Button size={"sm"} variant={"ghost"} onClick={onClick}>
+              <Copy className="h-6 w-6" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>コピーしました</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+  );
+}
